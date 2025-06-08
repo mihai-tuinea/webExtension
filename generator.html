@@ -12,6 +12,42 @@
         <a href="generator.html">Generator</a>
         <a href="savedPasswords.html">Saved Passwords</a>
     </header>
+    <main>
+        <section>
+            <h3>Options</h3>
+
+            <div class="option">
+                <label for="passwordLength">Password Length</label>
+                <input id="passwordLength" type="number" min="8" max="32" value="16">
+            </div>
+
+            <div class="option">
+                <label for="nrPasswords">Nr of Passwords</label>
+                <input id="nrPasswords" type="number" min="1" max="5" value="1">
+            </div>
+
+            <div class="option">
+                <label for="useDigits">Use Digits</label>
+                <input id="useDigits" type="checkbox" checked="checked">
+            </div>
+
+            <div class="option">
+                <label for="useSymbols">Use Symbols</label>
+                <input id="useSymbols" type="checkbox" checked="checked">
+            </div>
+
+            <div class="buttonContainer">
+                <button id="generateButton">Generate</button>
+            </div>
+        </section>
+
+        <section>
+            <h3>Generated Passwords</h3>
+
+            <div id="generatedPasswords"></div>
+        </section>
+    </main>
 </body>
 
+<script src="contentScript.js"></script>
 </html>

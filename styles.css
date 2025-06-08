@@ -5,4 +5,31 @@
 
 body {
     width: 350px;
+    margin: 10px;
+}
+
+h3 {
+    text-align: center;
+}
+
+h3,
+.option,
+.buttonContainer,
+.password {
+    margin: 10px 0;
+}
+
+.password{
+    font-size: 14px;
+}
+
+.option, .password, header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
 }
