@@ -108,17 +108,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     const saveButton = document.createElement("button");
                     saveButton.textContent = "Save Password";
                     saveButton.addEventListener("click", () => {
+
+                        // test fetching url
                         chrome.runtime.sendMessage({ action: "getActiveTabUrl" }, (response) => {
-                            
-
-
-                            // test fetching url
                             const testUrlFetching = document.createElement("p");
                             testUrlFetching.textContent = response.url;
                             saveButtonContainer.appendChild(testUrlFetching);
 
-
                         });
+
+                        // test fetching username
+                        chrome.runtime.sendMessage({ action: "getUsername" }, (response) => {
+                            const testUsernameFetching = document.createElement("p");
+                            testUsernameFetching.textContent = response.username;
+                            saveButtonContainer.appendChild(testUsernameFetching);
+                        });
+
                     });
                     saveButtonContainer.appendChild(saveButton);
                 })

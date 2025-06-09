@@ -1,12 +1,18 @@
 {
-  "name": "Secure Password Generator",
-  "version": "1.0.0",
-  "permissions": ["tabs"],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "action": {
-    "default_popup": "generator.html"
-  },
-  "manifest_version": 3
+    "name": "Secure Password Generator",
+    "version": "1.0.0",
+    "permissions": [
+        "tabs",
+        "scripting"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "generator.html"
+    },
+    "manifest_version": 3
 }

@@ -7,4 +7,37 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
         return true;
     }
+
+    if (message.action === "getUsername") {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            const tabId = tabs[0].id;
+            chrome.scripting.executeScript(
+                {
+                    target: { tabId: tabId },
+                    function: () => {
+                        console.log("Executing injected script to find username!");
+                        const possibleInputs = document.querySelectorAll(
+                            // prefers email over username
+                            "input[type='email'], input[name*='email'], input[name*='user'],input[id*='email'], input[id*='user']"
+                        );
+
+                        let username = "";
+                        for (const input of possibleInputs) {
+                            if (input.value.trim() !== "") {
+                                username = input.value.trim();
+                                break;
+                            }
+                        }
+
+                        return username;
+                    }
+                },
+                (results) => {
+                    const username = results?.[0]?.result || "";
+                    sendResponse({ username: username });
+                }
+            );
+        });
+        return true;
+    }
 });
