@@ -98,6 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
             copyButton.addEventListener("click", function () {
                 navigator.clipboard.writeText(pass).then(() => {
                     selectedPassword = pass;
+
                     copyButton.textContent = "Copied!";
                     setTimeout(() => {
                         copyButton.textContent = "Copy";
@@ -108,25 +109,31 @@ document.addEventListener("DOMContentLoaded", () => {
                     const saveButton = document.createElement("button");
                     saveButton.textContent = "Save Password";
                     saveButton.addEventListener("click", () => {
+                        chrome.runtime.sendMessage({ action: "getActiveTabUrl" }, (urlResponse) => {
+                            const urlObj = new URL(urlResponse.url);
+                            const website = urlObj.hostname;
 
-                        // test fetching url
-                        chrome.runtime.sendMessage({ action: "getActiveTabUrl" }, (response) => {
-                            const testUrlFetching = document.createElement("p");
-                            testUrlFetching.textContent = response.url;
-                            saveButtonContainer.appendChild(testUrlFetching);
+                            chrome.runtime.sendMessage({ action: "getUsername" }, (usernameResponse) => {
+                                const username = usernameResponse.username;
 
+                                chrome.runtime.sendMessage({
+                                    action: "savePassword",
+                                    data: {
+                                        website: website,
+                                        username: username,
+                                        password: selectedPassword
+                                    }
+                                }, (response) => {
+                                    if (response.success) {
+                                        saveButton.textContent = "Saved!";
+                                    }
+                                });
+                            });
                         });
-
-                        // test fetching username
-                        chrome.runtime.sendMessage({ action: "getUsername" }, (response) => {
-                            const testUsernameFetching = document.createElement("p");
-                            testUsernameFetching.textContent = response.username;
-                            saveButtonContainer.appendChild(testUsernameFetching);
-                        });
-
                     });
+
                     saveButtonContainer.appendChild(saveButton);
-                })
+                });
             });
             passwordDiv.appendChild(copyButton);
 
@@ -134,4 +141,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-})
+});

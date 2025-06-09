@@ -40,4 +40,25 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
         return true;
     }
+
+    if (message.action === "savePassword") {
+        const { website, username, password } = message.data;
+        const date = new Date();
+        const fileName = date.toISOString().replace(/[:.]/g, "-");
+        const fileContent = `${website} - ${username} - ${password}`;
+
+        chrome.storage.local.set({ [fileName]: fileContent }, () => {
+            console.log("Saved:", { [fileName]: fileContent });
+            sendResponse({ success: true });
+        });
+        return true;
+    }
+
+    if (message.action === "getAllPasswords") {
+        chrome.storage.local.get(null, (data) => {
+            sendResponse({ data: data || {} });
+        });
+        return true;
+    }
+
 });
