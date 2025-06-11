@@ -23,8 +23,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
                         let username = "";
                         for (const input of possibleInputs) {
-                            if (input.value.trim() !== "") {
-                                username = input.value.trim();
+                            if (input.value !== "") {
+                                username = input.value;
                                 break;
                             }
                         }
@@ -57,6 +57,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "getAllPasswords") {
         chrome.storage.local.get(null, (data) => {
             sendResponse({ data: data || {} });
+        });
+        return true;
+    }
+
+    if (message.action === "deletePassword") {
+        const fileName = message.fileName;
+        chrome.storage.local.remove(fileName, () => {
+            sendResponse({ success: true });
         });
         return true;
     }

@@ -13,7 +13,7 @@
         "service_worker": "background.js"
     },
     "action": {
-        "default_popup": "generator.html"
+        "default_popup": "popup.html"
     },
     "manifest_version": 3
 }
