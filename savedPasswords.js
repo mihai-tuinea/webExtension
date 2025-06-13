@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("searchPasswords").addEventListener("input", search);
+
     chrome.runtime.sendMessage({ action: "getAllPasswords" }, (response) => {
         const passwordsList = document.getElementById("passwordsList");
         passwordsList.innerHTML = "";
@@ -19,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const websiteP = document.createElement("p");
             websiteP.textContent = website;
             entry.appendChild(websiteP);
+            entry.dataset.website = website.toLowerCase();
 
             const usernameP = document.createElement("P");
             if (username === "")
@@ -31,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
             passwordP.textContent = password;
             entry.appendChild(passwordP)
 
+            const buttonContainer = document.createElement("div");
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Delete";
             deleteButton.addEventListener("click", () => {
@@ -45,9 +49,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 );
             });
-            entry.appendChild(deleteButton);
+            buttonContainer.appendChild(deleteButton);
+            entry.appendChild(buttonContainer);
 
             passwordsList.appendChild(entry);
         }
     });
 });
+
+
+function search() {
+    const entries = document.querySelectorAll(".savedEntry");
+    const input = document.getElementById("searchPasswords").value.toLowerCase();
+
+    entries.forEach((entry) => {
+        const website = entry.dataset.website || "";
+        if (website.includes(input) || input === "") {
+            entry.style.display = "";
+        }
+        else {
+            entry.style.display = "none";
+        }
+    })
+}
