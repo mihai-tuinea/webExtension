@@ -11,8 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-
-        // test code
         for (const [fileName, fileContent] of Object.entries(passwords)) {
             const entry = document.createElement("li");
             entry.classList.add("savedEntry");
@@ -23,16 +21,13 @@ document.addEventListener("DOMContentLoaded", () => {
             entry.appendChild(websiteP);
             entry.dataset.website = website.toLowerCase();
 
-            const usernameP = document.createElement("P");
-            if (username === "")
-                usernameP.textContent = "(no username)";
-            else
-                usernameP.textContent = username;
+            const usernameP = document.createElement("p");
+            usernameP.textContent = username || "(no username)";
             entry.appendChild(usernameP);
 
             const passwordP = document.createElement("p");
             passwordP.textContent = password;
-            entry.appendChild(passwordP)
+            entry.appendChild(passwordP);
 
             const buttonContainer = document.createElement("div");
             const deleteButton = document.createElement("button");
@@ -57,18 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-
 function search() {
     const entries = document.querySelectorAll(".savedEntry");
     const input = document.getElementById("searchPasswords").value.toLowerCase();
 
     entries.forEach((entry) => {
         const website = entry.dataset.website || "";
-        if (website.includes(input) || input === "") {
-            entry.style.display = "";
-        }
-        else {
-            entry.style.display = "none";
-        }
-    })
+        entry.style.display = website.includes(input) || input === "" ? "" : "none";
+    });
 }

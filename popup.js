@@ -7,9 +7,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let selectedPassword = "";
 
+    // LFSR Setup
+    function createLFSR(seed) {
+        let lfsr = seed & 0xFFFF;
+
+        return function next() {
+            let lsb = lfsr & 1;
+            lfsr >>= 1;
+            if (lsb === 1) {
+                lfsr ^= 0xB400; // Polynomial: x^16 + x^14 + x^13 + x^11 + 1
+            }
+            return lfsr / 0xFFFF;
+        };
+    }
+
+    function getRandomSeed() {
+        const array = new Uint16Array(1);
+        window.crypto.getRandomValues(array);
+        return array[0];
+    }
+
+    const lfsr = createLFSR(getRandomSeed());
+
+
+    function getRandomChar(str) {
+        return str[Math.floor(lfsr() * str.length)];
+    }
+
+    function shuffleString(str) {
+        const arr = str.split("");
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(lfsr() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr.join("");
+    }
+
     generateButton.addEventListener("click", function () {
         let passwordLengthInput = document.getElementById("passwordLength");
-        let passwordLength = passwordLengthInput.value;
+        let passwordLength = parseInt(passwordLengthInput.value);
 
         if (passwordLength < 8) {
             passwordLength = 8;
@@ -21,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         let nrPasswordsInput = document.getElementById("nrPasswords");
-        let nrPasswords = nrPasswordsInput.value;
+        let nrPasswords = parseInt(nrPasswordsInput.value);
 
         if (nrPasswords < 1) {
             nrPasswords = 1;
@@ -32,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
             nrPasswordsInput.value = 5;
         }
 
-
         const useDigits = document.getElementById("useDigits").checked;
         const useSymbols = document.getElementById("useSymbols").checked;
 
@@ -42,19 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
         digits = shuffleString(digits);
         let symbols = "!@#$%^&*()_+=[]{}|;:,.<>?";
         symbols = shuffleString(symbols);
-
-        function getRandomChar(str) {
-            return str[Math.floor(Math.random() * str.length)];
-        }
-
-        function shuffleString(str) {
-            const arr = str.split("");
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr.join("");
-        }
 
         const generatedPasswords = document.getElementById("generatedPasswords");
         generatedPasswords.innerHTML = "";
@@ -126,6 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 }, (response) => {
                                     if (response.success) {
                                         saveButton.textContent = "Saved!";
+                                        saveButton.disabled = true;
                                     }
                                 });
                             });
@@ -135,10 +158,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     saveButtonContainer.appendChild(saveButton);
                 });
             });
-            passwordDiv.appendChild(copyButton);
 
+            passwordDiv.appendChild(copyButton);
             generatedPasswords.appendChild(passwordDiv);
         }
     });
-
 });
