@@ -79,34 +79,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     if (message.action === "getUsername") {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            const tabId = tabs[0].id;
-            chrome.scripting.executeScript(
-                {
-                    target: { tabId: tabId },
-                    function: () => {
-                        const possibleInputs = document.querySelectorAll(
-                            "input[type='email'], input[name*='email'], input[name*='user'], input[id*='email'], input[id*='user']"
-                        );
+            const tab = tabs[0];
+            if (!tab || !tab.id) {
+                sendResponse({ username: "" });
+                return;
+            }
 
-                        let username = "";
-                        for (const input of possibleInputs) {
-                            if (input.value !== "") {
-                                username = input.value;
-                                break;
-                            }
-                        }
-
-                        return username;
-                    }
-                },
-                (results) => {
-                    const username = results?.[0]?.result || "";
-                    sendResponse({ username: username });
-                }
-            );
+            chrome.tabs.sendMessage(tab.id, { action: "getUsername" }, (response) => {
+                sendResponse(response);
+            });
         });
+
         return true;
     }
+
 
     if (message.action === "savePassword") {
         const { website, username, password } = message.data;
@@ -160,5 +146,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             sendResponse({ success: true });
         });
         return true;
+    }
+
+    if (message.action === "open_popup") {
+        chrome.action.openPopup();
     }
 });
