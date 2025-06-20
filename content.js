@@ -13,6 +13,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
 
         sendResponse({ username });
+        return true;
+    }
+
+    if (message.action === "fillPassword") {
+        const passInput = document.querySelector("input[type='password']");
+        if (passInput) {
+            passInput.value = message.password;
+            passInput.dispatchEvent(new Event('input', { bubbles: true }));
+            passInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        sendResponse();
     }
 });
 

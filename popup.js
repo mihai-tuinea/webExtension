@@ -151,6 +151,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                         saveButton.disabled = true;
                                     }
                                 });
+
+                                chrome.runtime.sendMessage({ action: "fillPassword", password: selectedPassword });
                             });
                         });
                     });

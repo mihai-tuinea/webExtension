@@ -150,5 +150,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     if (message.action === "open_popup") {
         chrome.action.openPopup();
+        sendResponse();
+        return true;
+    }
+
+    if (message.action === "fillPassword") {
+        const password = message.password;
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            const tab = tabs[0];
+            if (!tab || !tab.id) {
+                sendResponse({ password: "" });
+                return;
+            }
+
+            chrome.tabs.sendMessage(tab.id, { action: "fillPassword", password: password }, (response) => {
+                sendResponse(response);
+            });
+        });
+        sendResponse();
+        return true;
     }
 });
